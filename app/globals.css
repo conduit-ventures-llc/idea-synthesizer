@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #FAF6F0;
+  --color-cream-dark: #F0EBE3;
+  --color-navy: #1B2A4A;
+  --color-navy-light: #2A3D66;
+  --color-gold: #C8922A;
+  --color-gold-light: #D4A94E;
+  --color-gold-muted: #E8D5A8;
+  --color-warm-gray: #78716C;
+  --color-text: #1C1917;
+  --color-muted: #78716C;
+  --color-border: #E8E0D8;
+  --color-green: #2D6A4F;
+
+  --font-serif: "Lora", Georgia, serif;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  html {
+    scroll-behavior: smooth;
+    @apply font-sans;
+  }
+  input:focus,
+  textarea:focus {
+    outline: none;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  animation: fadeUp 0.45s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in forwards;
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+.spin-slow {
+  animation: spin-slow 0.8s linear infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 146, 42, 0.2); }
+  50% { box-shadow: 0 0 0 12px rgba(200, 146, 42, 0); }
+}
+
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
