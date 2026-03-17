@@ -56,6 +56,11 @@ export async function POST(request: NextRequest) {
         <h3 style="font-family:'Lora',Georgia,serif;font-size:18px;color:#1B2A4A;margin:24px 0 16px;">Your first 30 days</h3>
         ${m.path_to_first_dollar.map((s: { week: number; action: string }) => `<div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;"><div style="width:36px;height:36px;border-radius:50%;background:rgba(200,146,42,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:11px;font-weight:700;color:#C8922A;">W${s.week}</span></div><p style="font-size:14px;color:#1C1917;padding-top:8px;">${s.action}</p></div>`).join("")}
 
+        ${m.your_week ? `<h3 style="font-family:'Lora',Georgia,serif;font-size:18px;color:#1B2A4A;margin:24px 0 16px;">What your week actually looks like</h3>
+        <div style="background:white;border:1px solid #E8E0D8;border-radius:12px;padding:20px;margin-bottom:24px;">
+          <p style="font-size:15px;color:#1C1917;line-height:1.6;">${m.your_week}</p>
+        </div>` : ""}
+
         <div style="background:#1B2A4A;border-radius:16px;padding:24px;margin:24px 0;text-align:center;">
           <p style="font-size:12px;color:#C8922A;text-transform:uppercase;letter-spacing:0.2em;margin-bottom:8px;">Your Vertical</p>
           <p style="font-family:'Lora',Georgia,serif;font-size:24px;font-weight:700;color:white;margin-bottom:8px;">${m.vertical_name}</p>

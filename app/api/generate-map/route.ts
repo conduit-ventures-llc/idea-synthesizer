@@ -23,6 +23,8 @@ For three_people: describe three SPECIFIC humans (with a name, a situation, and 
 
 For path_to_first_dollar: give 4 concrete weekly actions for the first month. Week 1 should always be "Expert Interview" — talk to 3 people who have the problem.
 
+For your_week: write 3-4 sentences showing what their actual week looks like once this is running. Be SPECIFIC to their vertical — not generic. Show exactly how little time they spend vs. what AI handles for them. Reference their specific expertise. Example for a coaching dad: "You record your system once — two hours on a Sunday afternoon. AI handles every parent who needs it after that. Tuesday nights you coach. Wednesday morning your AI answered 12 questions while you slept."
+
 For vertical_name: create a compelling product/brand name. Short, memorable, professional.
 For vertical_description: one sentence that would work as a tagline.
 
@@ -43,6 +45,7 @@ OUTPUT FORMAT: Return ONLY valid JSON. No markdown. No code fences. No preamble.
     { "week": 3, "action": "..." },
     { "week": 4, "action": "..." }
   ],
+  "your_week": "3-4 sentences specific to their vertical...",
   "vertical_name": "...",
   "vertical_description": "...",
   "closing_line": "You already did the hard part. You lived it. Now let it work for you."

@@ -15,6 +15,7 @@ interface MonetizationMap {
     monthly: string;
   }[];
   path_to_first_dollar: { week: number; action: string }[];
+  your_week: string;
   vertical_name: string;
   vertical_description: string;
   closing_line: string;
@@ -567,8 +568,20 @@ export default function IdeaSynthesizerPage() {
             </div>
           </div>
 
+          {/* What Your Week Looks Like */}
+          {map.your_week && (
+            <div className="mb-10 fade-up" style={{ animationDelay: "0.35s" }}>
+              <h3 className="font-serif text-lg font-bold text-navy mb-4">
+                What your week actually looks like
+              </h3>
+              <div className="bg-white border border-border rounded-xl p-6">
+                <p className="text-[15px] text-text leading-relaxed">{map.your_week}</p>
+              </div>
+            </div>
+          )}
+
           {/* Blueprint Preview */}
-          <div className="mb-10 fade-up" style={{ animationDelay: "0.35s" }}>
+          <div className="mb-10 fade-up" style={{ animationDelay: "0.4s" }}>
             <div className="bg-navy rounded-2xl p-6 sm:p-8 text-center">
               <p className="text-xs font-bold text-gold uppercase tracking-[0.2em] mb-3">Your Vertical</p>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white mb-3">
@@ -581,14 +594,14 @@ export default function IdeaSynthesizerPage() {
           </div>
 
           {/* Closing Line */}
-          <div className="text-center mb-12 fade-up" style={{ animationDelay: "0.4s" }}>
+          <div className="text-center mb-12 fade-up" style={{ animationDelay: "0.45s" }}>
             <p className="font-serif text-[20px] sm:text-[24px] text-gold italic leading-relaxed max-w-[500px] mx-auto">
               &ldquo;{map.closing_line}&rdquo;
             </p>
           </div>
 
           {/* Idea Vault — Save */}
-          <div className="bg-white border-2 border-gold/30 rounded-2xl p-6 sm:p-8 fade-up" style={{ animationDelay: "0.45s" }}>
+          <div className="bg-white border-2 border-gold/30 rounded-2xl p-6 sm:p-8 fade-up" style={{ animationDelay: "0.5s" }}>
             <h3 className="font-serif text-xl font-bold text-navy mb-2 text-center">
               Save My Idea
             </h3>
