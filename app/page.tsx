@@ -22,7 +22,7 @@ interface MonetizationMap {
 }
 
 interface IdeaVault {
-  answers: Record<number, string>;
+  answers: Record<string, string>;
   mode: Mode;
   monetizationMap: MonetizationMap | null;
   email: string;
@@ -31,13 +31,13 @@ interface IdeaVault {
 
 // ─── Prompts ────────────────────────────────────────────────────────────────
 
-const PROMPTS = [
-  "What is a problem you have solved that other people are still struggling with?",
-  "Has anyone ever said to you: you should teach this, or write a book about this? What was the topic?",
-  "Think about someone who is right where you were 5 years ago \u2014 same struggle, same confusion, same starting point. What is the one piece of advice, shortcut, or insight you wish someone had given you?",
-  "If you were at a fire pit with your closest friends for one hour talking about any idea — what would it be?",
-  "If 1,000 people needed what you know — could you help all of them personally?",
-];
+const DEFAULT_PROMPTS: Record<number, string> = {
+  0: "What is a problem you have solved that other people are still struggling with?",
+  1: "Has anyone ever said to you: you should teach this, or write a book about this? What was the topic?",
+  2: "Think about someone who is right where you were 5 years ago \u2014 same struggle, same confusion, same starting point. What is the one piece of advice, shortcut, or insight you wish someone had given you?",
+  3: "If you were at a fire pit with your closest friends for one hour talking about any idea \u2014 what would it be?",
+  4: "If 1,000 people needed what you know \u2014 could you help all of them personally?",
+};
 
 const MODE_OPTIONS: { value: Mode; label: string; subtitle: string }[] = [
   { value: "exploring", label: "I'm exploring", subtitle: "Full 5-prompt conversation" },
@@ -69,7 +69,7 @@ function defaultVault(): IdeaVault {
 
 export default function IdeaSynthesizerPage() {
   const [vault, setVault] = useState<IdeaVault>(defaultVault);
-  const [phase, setPhase] = useState<"hero" | "prompts" | "generating" | "map" | "blueprint" | "saved">("hero");
+  const [phase, setPhase] = useState<"hero" | "personalizing" | "prompts" | "generating" | "map" | "blueprint" | "saved">("hero");
   const [currentPrompt, setCurrentPrompt] = useState(0);
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [mode, setMode] = useState<Mode>("exploring");
@@ -79,6 +79,7 @@ export default function IdeaSynthesizerPage() {
   const [email, setEmail] = useState("");
   const [saving, setSaving] = useState(false);
   const [heroInput, setHeroInput] = useState("");
+  const [personalizedPrompts, setPersonalizedPrompts] = useState<Record<number, string>>(DEFAULT_PROMPTS);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Load vault on mount
@@ -108,9 +109,10 @@ export default function IdeaSynthesizerPage() {
     return [];
   }
 
-  function handleHeroSubmit() {
+  async function handleHeroSubmit() {
     if (!heroInput.trim()) return;
-    const updated = { ...vault, answers: { ...vault.answers, 0: heroInput }, mode };
+    const updatedAnswers: Record<string, string> = { ...vault.answers, "0": heroInput };
+    const updated = { ...vault, answers: updatedAnswers, mode };
     setVault(updated);
     saveVault(updated);
 
@@ -119,11 +121,32 @@ export default function IdeaSynthesizerPage() {
       return;
     }
 
+    // Personalize questions 2-5 based on answer 1
+    setPhase("personalizing");
+    try {
+      const res = await fetch("/api/rewrite-prompts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answer_1: heroInput }),
+      });
+      const data = await res.json();
+      if (data.prompts) {
+        setPersonalizedPrompts({
+          0: DEFAULT_PROMPTS[0],
+          1: data.prompts.q2,
+          2: data.prompts.q3,
+          3: data.prompts.q4,
+          4: data.prompts.q5,
+        });
+      }
+    } catch {
+      // Fallback to defaults — don't block the flow
+    }
+
     const prompts = getActivePrompts();
-    // Skip prompt 0 since hero input covers it
     const startIdx = mode === "exploring" ? 1 : 0;
     setCurrentPrompt(prompts[startIdx]);
-    setCurrentAnswer(vault.answers[prompts[startIdx]] || "");
+    setCurrentAnswer(updated.answers[String(prompts[startIdx])] || "");
     setPhase("prompts");
   }
 
@@ -131,7 +154,8 @@ export default function IdeaSynthesizerPage() {
     if (!currentAnswer.trim()) return;
 
     // Save answer
-    const updated = { ...vault, answers: { ...vault.answers, [currentPrompt]: currentAnswer } };
+    const updatedAnswers: Record<string, string> = { ...vault.answers, [String(currentPrompt)]: currentAnswer };
+    const updated = { ...vault, answers: updatedAnswers };
     setVault(updated);
     saveVault(updated);
 
@@ -141,7 +165,7 @@ export default function IdeaSynthesizerPage() {
     if (currentIdx < prompts.length - 1) {
       const nextPromptIdx = prompts[currentIdx + 1];
       setCurrentPrompt(nextPromptIdx);
-      setCurrentAnswer(updated.answers[nextPromptIdx] || "");
+      setCurrentAnswer(updated.answers[String(nextPromptIdx)] || "");
     } else {
       // All prompts done — generate map
       handleGenerateMap(updated);
@@ -224,6 +248,7 @@ export default function IdeaSynthesizerPage() {
     setCurrentAnswer("");
     setHeroInput("");
     setError("");
+    setPersonalizedPrompts(DEFAULT_PROMPTS);
     setPhase("hero");
     setCurrentPrompt(0);
   }
@@ -318,7 +343,7 @@ export default function IdeaSynthesizerPage() {
                     } else {
                       const prompts = getActivePrompts();
                       // Find first unanswered prompt
-                      const firstUnanswered = prompts.find((p) => !vault.answers[p]);
+                      const firstUnanswered = prompts.find((p) => !vault.answers[String(p)]);
                       if (firstUnanswered !== undefined) {
                         setCurrentPrompt(firstUnanswered);
                         setCurrentAnswer("");
@@ -347,6 +372,24 @@ export default function IdeaSynthesizerPage() {
         <footer className="px-6 py-6 text-center">
           <p className="text-xs text-muted">&copy; {new Date().getFullYear()} Conduit Ventures LLC</p>
         </footer>
+      </div>
+    );
+  }
+
+  // ─── PERSONALIZING PHASE ────────────────────────────────────────────────
+
+  if (phase === "personalizing") {
+    return (
+      <div className="min-h-screen bg-cream flex items-center justify-center px-6">
+        <div className="text-center fade-up">
+          <div className="w-10 h-10 border-2 border-gold/30 border-t-gold rounded-full spin-slow mx-auto mb-6" />
+          <h2 className="font-serif text-2xl font-bold text-navy mb-3">
+            Making this about you
+          </h2>
+          <p className="text-muted text-[15px] max-w-[360px] mx-auto leading-relaxed">
+            Conduit is reading what you shared and rewriting every question to fit your idea.
+          </p>
+        </div>
       </div>
     );
   }
@@ -384,7 +427,7 @@ export default function IdeaSynthesizerPage() {
           <div className="max-w-[600px] w-full fade-up" key={currentPrompt}>
             {/* Prompt */}
             <h2 className="font-serif text-[24px] sm:text-[32px] font-bold text-navy leading-snug mb-8">
-              {PROMPTS[currentPrompt]}
+              {personalizedPrompts[currentPrompt] || DEFAULT_PROMPTS[currentPrompt]}
             </h2>
 
             {/* Answer */}
@@ -394,9 +437,10 @@ export default function IdeaSynthesizerPage() {
               onChange={(e) => {
                 setCurrentAnswer(e.target.value);
                 // Auto-save to vault on every keystroke
-                const updated = { ...vault, answers: { ...vault.answers, [currentPrompt]: e.target.value } };
-                setVault(updated);
-                saveVault(updated);
+                const savedAnswers: Record<string, string> = { ...vault.answers, [String(currentPrompt)]: e.target.value };
+                const savedVault = { ...vault, answers: savedAnswers };
+                setVault(savedVault);
+                saveVault(savedVault);
               }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
@@ -422,7 +466,7 @@ export default function IdeaSynthesizerPage() {
                   if (promptIdx > 0) {
                     const prevPromptIdx = prompts[promptIdx - 1];
                     setCurrentPrompt(prevPromptIdx);
-                    setCurrentAnswer(vault.answers[prevPromptIdx] || "");
+                    setCurrentAnswer(vault.answers[String(prevPromptIdx)] || "");
                   } else {
                     setPhase("hero");
                   }
@@ -683,9 +727,10 @@ export default function IdeaSynthesizerPage() {
             <button
               onClick={() => {
                 if (!currentAnswer.trim()) return;
+                const bpAnswers: Record<string, string> = { ...vault.answers, blueprint: currentAnswer };
                 const updated = {
                   ...vault,
-                  answers: { ...vault.answers, blueprint: currentAnswer },
+                  answers: bpAnswers,
                 };
                 setVault(updated);
                 saveVault(updated);
