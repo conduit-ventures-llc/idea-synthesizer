@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
         const promptLabels: Record<string, string> = {
           "0": "Problem they solved",
           "1": "What people say they should teach",
-          "2": "The one thing they would hand someone",
+          "2": "Advice they wish someone had given them 5 years ago",
           "3": "Fire pit conversation topic",
           "4": "Can they help 1,000 people?",
         };

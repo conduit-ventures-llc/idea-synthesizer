@@ -33,7 +33,7 @@ interface IdeaVault {
 const PROMPTS = [
   "What is a problem you have solved that other people are still struggling with?",
   "Has anyone ever said to you: you should teach this, or write a book about this? What was the topic?",
-  "Think about someone about to go through something you have already been through. What is the one thing you would hand them so they do not figure it out the hard way?",
+  "Think about someone who is right where you were 5 years ago \u2014 same struggle, same confusion, same starting point. What is the one piece of advice, shortcut, or insight you wish someone had given you?",
   "If you were at a fire pit with your closest friends for one hour talking about any idea — what would it be?",
   "If 1,000 people needed what you know — could you help all of them personally?",
 ];

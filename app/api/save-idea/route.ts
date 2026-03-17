@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     const promptLabels: Record<string, string> = {
       "0": "Problem you solved",
       "1": "What people say you should teach",
-      "2": "The one thing you would hand someone",
+      "2": "Advice you wish someone had given you 5 years ago",
       "3": "Fire pit conversation topic",
       "4": "Can you help 1,000 people?",
       "blueprint": "Your blueprint request",
