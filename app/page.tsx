@@ -80,6 +80,11 @@ export default function IdeaSynthesizerPage() {
   const [saving, setSaving] = useState(false);
   const [heroInput, setHeroInput] = useState("");
   const [personalizedPrompts, setPersonalizedPrompts] = useState<Record<number, string>>(DEFAULT_PROMPTS);
+  const [recording, setRecording] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Load vault on mount
@@ -107,6 +112,64 @@ export default function IdeaSynthesizerPage() {
     if (mode === "exploring") return [0, 1, 2, 3, 4];
     if (mode === "have_idea") return [2, 3];
     return [];
+  }
+
+  async function startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      mediaRecorderRef.current = mediaRecorder;
+      chunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        const url = URL.createObjectURL(blob);
+        setAudioUrl(url);
+
+        // Transcribe via Whisper
+        setTranscribing(true);
+        try {
+          const formData = new FormData();
+          formData.append("audio", blob, "recording.webm");
+          const res = await fetch("/api/transcribe", { method: "POST", body: formData });
+          if (res.ok) {
+            const data = await res.json();
+            setHeroInput(data.text);
+          } else {
+            setError("Couldn\u2019t transcribe your recording. Try typing instead.");
+          }
+        } catch {
+          setError("Couldn\u2019t transcribe your recording. Try typing instead.");
+        } finally {
+          setTranscribing(false);
+        }
+      };
+
+      mediaRecorder.start();
+      setRecording(true);
+
+      // Auto-stop at 90 seconds
+      setTimeout(() => {
+        if (mediaRecorderRef.current?.state === "recording") {
+          mediaRecorderRef.current.stop();
+          setRecording(false);
+        }
+      }, 90000);
+    } catch {
+      setError("Couldn\u2019t access your microphone. Check your browser permissions.");
+    }
+  }
+
+  function stopRecording() {
+    if (mediaRecorderRef.current?.state === "recording") {
+      mediaRecorderRef.current.stop();
+      setRecording(false);
+    }
   }
 
   async function handleHeroSubmit() {
@@ -312,18 +375,58 @@ export default function IdeaSynthesizerPage() {
                 placeholder={
                   mode === "know_what_i_want"
                     ? "Describe the product or service you want to build..."
-                    : "Start typing — what\u2019s the thing you know that others don\u2019t?"
+                    : "Start typing \u2014 or tap the microphone and just talk."
                 }
                 className="w-full bg-white border-2 border-border rounded-2xl px-6 py-5 text-[17px] resize-none h-32 focus:border-gold transition placeholder:text-muted/50"
               />
             </div>
 
+            {/* Voice Capture */}
+            <div className="flex items-center justify-center mt-4 mb-2">
+              {transcribing ? (
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 border-2 border-gold/30 border-t-gold rounded-full spin-slow" />
+                  <span className="text-sm text-muted">Listening to what you said...</span>
+                </div>
+              ) : recording ? (
+                <button
+                  onClick={stopRecording}
+                  className="flex items-center gap-3 bg-red-50 border-2 border-red-300 rounded-2xl px-6 py-3.5 min-h-[44px] transition hover:bg-red-100"
+                >
+                  <span className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
+                  <span className="text-sm font-bold text-red-700">Recording... tap to stop</span>
+                </button>
+              ) : (
+                <button
+                  onClick={startRecording}
+                  className="flex items-center gap-3 bg-gold/10 border-2 border-gold/30 rounded-2xl px-6 py-3.5 min-h-[44px] transition hover:bg-gold/20 hover:border-gold/50"
+                >
+                  <span className="text-2xl">&#127908;</span>
+                  <span className="text-sm font-bold text-navy">At a fire pit? Just talk.</span>
+                </button>
+              )}
+            </div>
+
+            {/* Audio playback if recorded */}
+            {audioUrl && !recording && !transcribing && (
+              <div className="flex justify-center mb-2 fade-in">
+                <audio src={audioUrl} controls className="h-8" />
+              </div>
+            )}
+
+            {/* Error */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-2xl px-6 py-4 mb-2 fade-up">
+                <p className="text-[15px] text-red-800 font-medium">{error}</p>
+              </div>
+            )}
+
             {/* Submit */}
             <button
               onClick={handleHeroSubmit}
-              disabled={!heroInput.trim()}
-              className={`w-full mt-4 rounded-2xl py-4 text-[17px] font-bold transition min-h-[44px] ${
-                heroInput.trim()
+              disabled={!heroInput.trim() || transcribing}
+              className={`w-full mt-2 rounded-2xl py-4 text-[17px] font-bold transition min-h-[44px] ${
+                heroInput.trim() && !transcribing
                   ? "bg-gold text-white hover:opacity-90 cursor-pointer pulse-glow"
                   : "bg-cream-dark text-muted cursor-not-allowed"
               }`}
