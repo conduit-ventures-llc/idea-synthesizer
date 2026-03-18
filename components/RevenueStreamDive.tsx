@@ -104,7 +104,7 @@ export default function RevenueStreamDive({
         <div className="sticky top-0 bg-navy px-6 py-5 z-10">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold text-gold uppercase tracking-[0.15em]">Deep Dive</p>
+              <p className="text-[13px] font-bold text-gold uppercase tracking-[0.15em]">Deep Dive</p>
               <h2 className="font-serif text-xl font-bold text-white mt-1">{streamLabel}</h2>
             </div>
             <button
@@ -120,19 +120,19 @@ export default function RevenueStreamDive({
           {loading && (
             <div className="text-center py-16 fade-up">
               <div className="w-10 h-10 border-2 border-gold/30 border-t-gold rounded-full spin-slow mx-auto mb-6" />
-              <p className="text-muted text-sm">Expanding this revenue stream...</p>
+              <p className="text-muted text-[15px]">Expanding this revenue stream...</p>
             </div>
           )}
 
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-4 fade-up">
-              <p className="text-sm text-red-800 font-medium">{error}</p>
+              <p className="text-[15px] text-red-800 font-medium">{error}</p>
               <button
                 onClick={() => {
                   setError("");
                   loadDive();
                 }}
-                className="mt-3 text-sm font-bold text-red-700 hover:text-red-900 transition"
+                className="mt-3 text-[15px] font-bold text-red-700 hover:text-red-900 transition min-h-[44px]"
               >
                 Try again
               </button>
@@ -147,7 +147,7 @@ export default function RevenueStreamDive({
                   <span className="text-xl">&#127970;</span> Business Model
                 </h3>
                 <div className="bg-white border border-border rounded-xl p-5 space-y-3">
-                  <p className="text-[14px] text-text leading-relaxed">{dive.business_model.overview}</p>
+                  <p className="text-[15px] text-text leading-relaxed">{dive.business_model.overview}</p>
                   <div className="grid grid-cols-2 gap-3 text-[13px]">
                     <div>
                       <span className="font-bold text-navy">Revenue Type:</span>{" "}
@@ -173,7 +173,7 @@ export default function RevenueStreamDive({
                         {dive.business_model.tools_needed.map((tool, i) => (
                           <span
                             key={i}
-                            className="text-xs bg-gold/10 text-gold border border-gold/20 rounded-lg px-2.5 py-1 font-medium"
+                            className="text-[13px] bg-gold/10 text-gold border border-gold/20 rounded-lg px-2.5 py-1 font-medium"
                           >
                             {tool}
                           </span>
@@ -191,20 +191,20 @@ export default function RevenueStreamDive({
                 </h3>
                 <div className="bg-white border border-border rounded-xl p-5 space-y-3">
                   <div>
-                    <p className="text-xs font-bold text-gold uppercase tracking-wide mb-1">Opening</p>
-                    <p className="text-[14px] text-text leading-relaxed italic">&ldquo;{dive.first_customer_script.intro}&rdquo;</p>
+                    <p className="text-[13px] font-bold text-gold uppercase tracking-wide mb-1">Opening</p>
+                    <p className="text-[15px] text-text leading-relaxed italic">&ldquo;{dive.first_customer_script.intro}&rdquo;</p>
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-gold uppercase tracking-wide mb-1">Pitch</p>
-                    <p className="text-[14px] text-text leading-relaxed">{dive.first_customer_script.pitch}</p>
+                    <p className="text-[13px] font-bold text-gold uppercase tracking-wide mb-1">Pitch</p>
+                    <p className="text-[15px] text-text leading-relaxed">{dive.first_customer_script.pitch}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-gold uppercase tracking-wide mb-1">The Ask</p>
-                    <p className="text-[14px] text-text leading-relaxed font-medium">{dive.first_customer_script.ask}</p>
+                    <p className="text-[13px] font-bold text-gold uppercase tracking-wide mb-1">The Ask</p>
+                    <p className="text-[15px] text-text leading-relaxed font-medium">{dive.first_customer_script.ask}</p>
                   </div>
                   {dive.first_customer_script.objection_handling.length > 0 && (
                     <div>
-                      <p className="text-xs font-bold text-gold uppercase tracking-wide mb-1">If They Push Back</p>
+                      <p className="text-[13px] font-bold text-gold uppercase tracking-wide mb-1">If They Push Back</p>
                       <ul className="space-y-1.5">
                         {dive.first_customer_script.objection_handling.map((obj, i) => (
                           <li key={i} className="text-[13px] text-muted leading-relaxed flex gap-2">
@@ -226,19 +226,19 @@ export default function RevenueStreamDive({
                 <div className="bg-white border border-border rounded-xl p-5">
                   <div className="grid grid-cols-2 gap-3 mb-4">
                     <div className="bg-cream rounded-lg p-3 text-center">
-                      <p className="text-xs text-muted mb-1">Base Price</p>
+                      <p className="text-[13px] text-muted mb-1">Base Price</p>
                       <p className="font-serif text-lg font-bold text-navy">{dive.pricing_calculator.base_price}</p>
                     </div>
                     <div className="bg-cream rounded-lg p-3 text-center">
-                      <p className="text-xs text-muted mb-1">5 Clients</p>
+                      <p className="text-[13px] text-muted mb-1">5 Clients</p>
                       <p className="font-serif text-lg font-bold text-navy">{dive.pricing_calculator.at_5_clients}</p>
                     </div>
                     <div className="bg-gold/10 rounded-lg p-3 text-center">
-                      <p className="text-xs text-gold mb-1">20 Clients</p>
+                      <p className="text-[13px] text-gold mb-1">20 Clients</p>
                       <p className="font-serif text-lg font-bold text-navy">{dive.pricing_calculator.at_20_clients}</p>
                     </div>
                     <div className="bg-navy rounded-lg p-3 text-center">
-                      <p className="text-xs text-gold mb-1">50 Clients</p>
+                      <p className="text-[13px] text-gold mb-1">50 Clients</p>
                       <p className="font-serif text-xl font-bold text-white">{dive.pricing_calculator.at_50_clients}</p>
                     </div>
                   </div>
@@ -256,11 +256,11 @@ export default function RevenueStreamDive({
                     {dive.thirty_day_plan.map((step, i) => (
                       <div key={i} className="flex gap-4 items-start">
                         <div className="w-16 h-8 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0">
-                          <span className="text-xs font-bold text-gold">{step.day_range}</span>
+                          <span className="text-[13px] font-bold text-gold">{step.day_range}</span>
                         </div>
                         <div>
-                          <p className="text-[14px] text-text font-medium">{step.action}</p>
-                          <p className="text-[12px] text-muted mt-0.5">{step.outcome}</p>
+                          <p className="text-[15px] text-text font-medium">{step.action}</p>
+                          <p className="text-[13px] text-muted mt-0.5">{step.outcome}</p>
                         </div>
                       </div>
                     ))}

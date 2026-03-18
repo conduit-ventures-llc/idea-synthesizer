@@ -387,7 +387,7 @@ export default function IdeaSynthesizerPage() {
         <nav className="px-6 py-5">
           <div className="max-w-[800px] mx-auto flex items-center justify-between">
             <span className="font-serif text-lg font-bold text-navy tracking-tight">Conduit Ventures</span>
-            <span className="text-xs text-muted">The Idea Synthesizer</span>
+            <span className="text-[13px] text-muted">The Idea Synthesizer</span>
           </div>
         </nav>
 
@@ -413,10 +413,10 @@ export default function IdeaSynthesizerPage() {
                       : "bg-white text-text border-border hover:border-navy/30"
                   }`}
                 >
-                  <div className={`text-sm font-bold ${mode === opt.value ? "text-white" : "text-navy"}`}>
+                  <div className={`text-[15px] font-bold ${mode === opt.value ? "text-white" : "text-navy"}`}>
                     {opt.label}
                   </div>
-                  <div className={`text-xs mt-0.5 ${mode === opt.value ? "text-white/70" : "text-muted"}`}>
+                  <div className={`text-[13px] mt-0.5 ${mode === opt.value ? "text-white/70" : "text-muted"}`}>
                     {opt.subtitle}
                   </div>
                 </button>
@@ -425,7 +425,7 @@ export default function IdeaSynthesizerPage() {
 
             {/* Expert Type Selector */}
             <div className="mb-8">
-              <p className="text-xs font-bold text-navy uppercase tracking-[0.15em] mb-3 text-center">What kind of expert are you?</p>
+              <p className="text-[13px] font-bold text-navy uppercase tracking-[0.15em] mb-3 text-center">What kind of expert are you?</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {EXPERT_TYPES.map((et) => (
                   <button
@@ -440,10 +440,10 @@ export default function IdeaSynthesizerPage() {
                     <div className="flex items-center gap-2">
                       <span className="text-lg">{et.emoji}</span>
                       <div>
-                        <div className={`text-xs font-bold ${expertType === et.value ? "text-white" : "text-navy"}`}>
+                        <div className={`text-[13px] font-bold ${expertType === et.value ? "text-white" : "text-navy"}`}>
                           {et.label}
                         </div>
-                        <div className={`text-[10px] ${expertType === et.value ? "text-white/70" : "text-muted"}`}>
+                        <div className={`text-[13px] ${expertType === et.value ? "text-white/70" : "text-muted"}`}>
                           {et.subtitle}
                         </div>
                       </div>
@@ -478,7 +478,7 @@ export default function IdeaSynthesizerPage() {
               {transcribing ? (
                 <div className="flex items-center gap-3">
                   <div className="w-5 h-5 border-2 border-gold/30 border-t-gold rounded-full spin-slow" />
-                  <span className="text-sm text-muted">Listening to what you said...</span>
+                  <span className="text-[15px] text-muted">Listening to what you said...</span>
                 </div>
               ) : recording ? (
                 <button
@@ -486,7 +486,7 @@ export default function IdeaSynthesizerPage() {
                   className="flex items-center gap-3 bg-red-50 border-2 border-red-300 rounded-2xl px-6 py-3.5 min-h-[44px] transition hover:bg-red-100"
                 >
                   <span className="w-3 h-3 bg-red-500 rounded-full animate-pulse" />
-                  <span className="text-sm font-bold text-red-700">Recording... tap to stop</span>
+                  <span className="text-[15px] font-bold text-red-700">Recording... tap to stop</span>
                 </button>
               ) : (
                 <button
@@ -494,7 +494,7 @@ export default function IdeaSynthesizerPage() {
                   className="flex items-center gap-3 bg-gold/10 border-2 border-gold/30 rounded-2xl px-6 py-3.5 min-h-[44px] transition hover:bg-gold/20 hover:border-gold/50"
                 >
                   <span className="text-2xl">&#127908;</span>
-                  <span className="text-sm font-bold text-navy">At a fire pit? Just talk.</span>
+                  <span className="text-[15px] font-bold text-navy">At a fire pit? Just talk.</span>
                 </button>
               )}
             </div>
@@ -529,7 +529,7 @@ export default function IdeaSynthesizerPage() {
             {/* Resume indicator */}
             {Object.keys(vault.answers).length > 0 && (
               <div className="mt-6 text-center fade-in">
-                <p className="text-xs text-muted mb-2">You have a saved idea in progress.</p>
+                <p className="text-[13px] text-muted mb-2">You have a saved idea in progress.</p>
                 <button
                   onClick={() => {
                     if (vault.monetizationMap) {
@@ -548,13 +548,13 @@ export default function IdeaSynthesizerPage() {
                       }
                     }
                   }}
-                  className="text-sm font-bold text-gold hover:text-gold-light transition min-h-[44px] px-4"
+                  className="text-[15px] font-bold text-gold hover:text-gold-light transition min-h-[44px] px-4"
                 >
                   Continue where I left off &rarr;
                 </button>
                 <button
                   onClick={handleStartOver}
-                  className="block mx-auto mt-2 text-xs text-muted hover:text-text transition min-h-[44px] px-4"
+                  className="block mx-auto mt-2 text-[13px] text-muted hover:text-text transition min-h-[44px] px-4"
                 >
                   Start fresh
                 </button>
@@ -565,7 +565,7 @@ export default function IdeaSynthesizerPage() {
 
         {/* Footer */}
         <footer className="px-6 py-6 text-center">
-          <p className="text-xs text-muted">&copy; {new Date().getFullYear()} Conduit Ventures LLC</p>
+          <p className="text-[13px] text-muted">&copy; {new Date().getFullYear()} Conduit Ventures LLC</p>
         </footer>
       </div>
     );
@@ -602,7 +602,7 @@ export default function IdeaSynthesizerPage() {
         <nav className="px-6 py-5">
           <div className="max-w-[600px] mx-auto flex items-center justify-between">
             <span className="font-serif text-lg font-bold text-navy tracking-tight">Conduit Ventures</span>
-            <span className="text-xs text-muted">
+            <span className="text-[13px] text-muted">
               {promptIdx + 1} of {prompts.length}
             </span>
           </div>
@@ -666,7 +666,7 @@ export default function IdeaSynthesizerPage() {
                     setPhase("hero");
                   }
                 }}
-                className="text-sm font-semibold text-navy hover:opacity-70 transition min-h-[44px] px-4"
+                className="text-[15px] font-semibold text-navy hover:opacity-70 transition min-h-[44px] px-4"
               >
                 &larr; Back
               </button>
@@ -717,7 +717,7 @@ export default function IdeaSynthesizerPage() {
             <span className="font-serif text-lg font-bold text-navy tracking-tight">Conduit Ventures</span>
             <button
               onClick={handleStartOver}
-              className="text-xs text-muted hover:text-text transition min-h-[44px] px-2"
+              className="text-[13px] text-muted hover:text-text transition min-h-[44px] px-2"
             >
               Start Over
             </button>
@@ -727,11 +727,11 @@ export default function IdeaSynthesizerPage() {
         <div className="max-w-[700px] mx-auto px-6 pt-4 pb-24">
           {/* The One Number */}
           <div className="text-center mb-12 fade-up">
-            <p className="text-xs font-bold text-gold uppercase tracking-[0.2em] mb-3">Your Number</p>
+            <p className="text-[13px] font-bold text-gold uppercase tracking-[0.2em] mb-3">Your Number</p>
             <h1 className="font-serif text-[48px] sm:text-[64px] font-bold text-navy leading-none mb-2">
               {map.the_one_number}
             </h1>
-            <p className="text-muted text-sm">per month — Scenario B</p>
+            <p className="text-muted text-[15px]">per month — Scenario B</p>
           </div>
 
           {/* Three People */}
@@ -743,7 +743,7 @@ export default function IdeaSynthesizerPage() {
               {map.three_people.map((person, i) => (
                 <div key={i} className="bg-white border border-border rounded-xl p-5">
                   <div className="text-2xl mb-3">{["👤", "👩‍💼", "🧑‍🎓"][i]}</div>
-                  <p className="text-[14px] text-text leading-relaxed">{person}</p>
+                  <p className="text-[15px] text-text leading-relaxed">{person}</p>
                 </div>
               ))}
             </div>
@@ -765,7 +765,7 @@ export default function IdeaSynthesizerPage() {
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className={`text-xs font-bold uppercase tracking-wide ${
+                    <span className={`text-[13px] font-bold uppercase tracking-wide ${
                       i === 1 ? "text-gold" : "text-gold"
                     }`}>
                       {scenario.label}
@@ -776,7 +776,7 @@ export default function IdeaSynthesizerPage() {
                       {scenario.monthly}
                     </span>
                   </div>
-                  <p className={`text-[14px] leading-relaxed ${
+                  <p className={`text-[15px] leading-relaxed ${
                     i === 1 ? "text-white/80" : "text-muted"
                   }`}>
                     {scenario.description}
@@ -786,7 +786,7 @@ export default function IdeaSynthesizerPage() {
                       setDiveScenario(scenario);
                       setDiveOpen(true);
                     }}
-                    className={`mt-3 text-xs font-bold transition min-h-[32px] flex items-center gap-1 ${
+                    className={`mt-3 text-[13px] font-bold transition min-h-[44px] flex items-center gap-1 ${
                       i === 1
                         ? "text-gold hover:text-gold-light"
                         : "text-gold hover:text-gold-light"
@@ -809,10 +809,10 @@ export default function IdeaSynthesizerPage() {
                 {map.path_to_first_dollar.map((step, i) => (
                   <div key={i} className="flex gap-4 items-start">
                     <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0">
-                      <span className="text-xs font-bold text-gold">W{step.week}</span>
+                      <span className="text-[13px] font-bold text-gold">W{step.week}</span>
                     </div>
                     <div>
-                      <p className="text-[14px] text-text font-medium">{step.action}</p>
+                      <p className="text-[15px] text-text font-medium">{step.action}</p>
                     </div>
                   </div>
                 ))}
@@ -835,7 +835,7 @@ export default function IdeaSynthesizerPage() {
           {/* Blueprint Preview */}
           <div className="mb-10 fade-up" style={{ animationDelay: "0.4s" }}>
             <div className="bg-navy rounded-2xl p-6 sm:p-8 text-center">
-              <p className="text-xs font-bold text-gold uppercase tracking-[0.2em] mb-3">Your Vertical</p>
+              <p className="text-[13px] font-bold text-gold uppercase tracking-[0.2em] mb-3">Your Vertical</p>
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white mb-3">
                 {map.vertical_name}
               </h2>
@@ -857,7 +857,7 @@ export default function IdeaSynthesizerPage() {
             <h3 className="font-serif text-lg font-bold text-navy mb-3">
               Remix your map
             </h3>
-            <p className="text-muted text-sm mb-4">
+            <p className="text-muted text-[15px] mb-4">
               Tap a suggestion or type your own to regenerate with a twist.
             </p>
             <div className="flex flex-wrap gap-2 mb-4">
@@ -866,7 +866,7 @@ export default function IdeaSynthesizerPage() {
                   key={chip}
                   onClick={() => handleRemix(chip)}
                   disabled={refining}
-                  className="remix-chip bg-white border border-border rounded-full px-4 py-2 text-xs font-semibold text-navy hover:border-gold hover:bg-gold/5 transition min-h-[36px] disabled:opacity-50"
+                  className="remix-chip bg-white border border-border rounded-full px-4 py-2 text-[13px] font-semibold text-navy hover:border-gold hover:bg-gold/5 transition min-h-[44px] disabled:opacity-50"
                 >
                   {chip}
                 </button>
@@ -883,14 +883,14 @@ export default function IdeaSynthesizerPage() {
                   }
                 }}
                 placeholder="Or type your own remix instruction..."
-                className="flex-1 bg-white border border-border rounded-xl px-4 py-3 text-sm resize-none h-12 focus:border-gold transition placeholder:text-muted/50"
+                className="flex-1 bg-white border border-border rounded-xl px-4 py-3 text-[15px] resize-none h-12 focus:border-gold transition placeholder:text-muted/50"
               />
               <button
                 onClick={() => {
                   if (refineInput.trim()) handleRemix(refineInput);
                 }}
                 disabled={!refineInput.trim() || refining}
-                className={`rounded-xl px-6 py-3 text-sm font-bold transition min-h-[44px] ${
+                className={`rounded-xl px-6 py-3 text-[15px] font-bold transition min-h-[44px] ${
                   refineInput.trim() && !refining
                     ? "bg-gold text-white hover:opacity-90 cursor-pointer"
                     : "bg-cream-dark text-muted cursor-not-allowed"
@@ -902,7 +902,7 @@ export default function IdeaSynthesizerPage() {
             {refining && (
               <div className="flex items-center gap-3 mt-3 fade-in">
                 <div className="w-4 h-4 border-2 border-gold/30 border-t-gold rounded-full spin-slow" />
-                <span className="text-xs text-muted">Regenerating your Monetization Map...</span>
+                <span className="text-[13px] text-muted">Regenerating your Monetization Map...</span>
               </div>
             )}
           </div>
@@ -916,7 +916,7 @@ export default function IdeaSynthesizerPage() {
               <div className="space-y-4">
                 {resourceLinks.map((group, gi) => (
                   <div key={gi}>
-                    <p className="text-xs font-bold text-navy uppercase tracking-[0.12em] mb-2 flex items-center gap-2">
+                    <p className="text-[13px] font-bold text-navy uppercase tracking-[0.12em] mb-2 flex items-center gap-2">
                       <span>{group.icon}</span> {group.category}
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -928,8 +928,8 @@ export default function IdeaSynthesizerPage() {
                           rel="noopener noreferrer"
                           className="resource-link bg-white border border-border rounded-xl px-4 py-3 hover:border-gold/50 hover:shadow-sm transition block"
                         >
-                          <p className="text-sm font-bold text-navy">{link.name}</p>
-                          <p className="text-xs text-muted mt-0.5 leading-relaxed">{link.description}</p>
+                          <p className="text-[15px] font-bold text-navy">{link.name}</p>
+                          <p className="text-[13px] text-muted mt-0.5 leading-relaxed">{link.description}</p>
                         </a>
                       ))}
                     </div>
@@ -944,7 +944,7 @@ export default function IdeaSynthesizerPage() {
             <h3 className="font-serif text-xl font-bold text-navy mb-2 text-center">
               Save My Idea
             </h3>
-            <p className="text-muted text-sm text-center mb-6">
+            <p className="text-muted text-[15px] text-center mb-6">
               We&apos;ll email your answers and Monetization Map to you. Your idea is already saved locally.
             </p>
 
@@ -974,7 +974,7 @@ export default function IdeaSynthesizerPage() {
 
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 mt-4">
-                <p className="text-sm text-red-800">{error}</p>
+                <p className="text-[15px] text-red-800">{error}</p>
               </div>
             )}
           </div>
@@ -1006,7 +1006,7 @@ export default function IdeaSynthesizerPage() {
         <nav className="px-6 py-5">
           <div className="max-w-[600px] mx-auto flex items-center justify-between">
             <span className="font-serif text-lg font-bold text-navy tracking-tight">Conduit Ventures</span>
-            <button onClick={() => setPhase("hero")} className="text-xs text-muted hover:text-text transition min-h-[44px] px-2">
+            <button onClick={() => setPhase("hero")} className="text-[13px] text-muted hover:text-text transition min-h-[44px] px-2">
               &larr; Back
             </button>
           </div>
@@ -1080,7 +1080,7 @@ export default function IdeaSynthesizerPage() {
           >
             Explore Another Idea
           </button>
-          <p className="text-xs text-muted mt-6">
+          <p className="text-[13px] text-muted mt-6">
             &copy; {new Date().getFullYear()} Conduit Ventures LLC
           </p>
         </div>
