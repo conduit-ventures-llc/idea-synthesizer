@@ -727,23 +727,30 @@ export default function IdeaSynthesizerPage() {
         <div className="max-w-[700px] mx-auto px-6 pt-4 pb-24">
           {/* The One Number */}
           <div className="text-center mb-12 fade-up">
-            <p className="text-[13px] font-bold text-gold uppercase tracking-[0.2em] mb-3">Your Number</p>
-            <h1 className="font-serif text-[48px] sm:text-[64px] font-bold text-navy leading-none mb-2">
-              {map.the_one_number}
-            </h1>
-            <p className="text-muted text-[15px]">per month — Scenario B</p>
+            <p className="text-[15px] font-bold text-gold uppercase tracking-[0.2em] mb-3">Your expertise is worth:</p>
+          </div>
+
+          {/* The One Number — Premium Reveal */}
+          <div className="w-full bg-gradient-to-r from-[#C8922A]/10 via-[#C8922A]/20 to-[#C8922A]/10 border-y border-[#C8922A]/30 py-10 mb-12 -mx-6 px-6">
+            <div className="max-w-[700px] mx-auto text-center">
+              <h1 className="font-['JetBrains_Mono'] text-[48px] sm:text-[64px] font-bold text-[#1A1A1A] leading-none mb-3 count-up">
+                {map.the_one_number}
+              </h1>
+              <p className="text-[15px] text-[#6B7280]">per month</p>
+              <p className="text-[13px] text-[#C8922A] font-semibold mt-2 uppercase tracking-wider">This is Scenario B — your base case.</p>
+            </div>
           </div>
 
           {/* Three People */}
           <div className="mb-10 fade-up" style={{ animationDelay: "0.1s" }}>
-            <h3 className="font-serif text-lg font-bold text-navy mb-4">
+            <h3 className="font-serif text-[18px] font-bold text-navy mb-4">
               Three people who need what you know
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {map.three_people.map((person, i) => (
-                <div key={i} className="bg-white border border-border rounded-xl p-5">
-                  <div className="text-2xl mb-3">{["👤", "👩‍💼", "🧑‍🎓"][i]}</div>
-                  <p className="text-[15px] text-text leading-relaxed">{person}</p>
+                <div key={i} className="bg-white border border-border border-l-[3px] border-l-[#C8922A] rounded-xl p-5">
+                  <div className="text-2xl mb-3">{["\uD83D\uDC64", "\uD83D\uDC69\u200D\uD83D\uDCBC", "\uD83E\uDDD1\u200D\uD83C\uDF93"][i]}</div>
+                  <p className="text-[16px] text-text leading-relaxed">{person}</p>
                 </div>
               ))}
             </div>
@@ -751,7 +758,7 @@ export default function IdeaSynthesizerPage() {
 
           {/* Three Scenarios */}
           <div className="mb-10 fade-up" style={{ animationDelay: "0.2s" }}>
-            <h3 className="font-serif text-lg font-bold text-navy mb-4">
+            <h3 className="font-serif text-[18px] font-bold text-navy mb-4">
               Three paths forward
             </h3>
             <div className="space-y-3">
@@ -801,7 +808,7 @@ export default function IdeaSynthesizerPage() {
 
           {/* Path to First Dollar */}
           <div className="mb-10 fade-up" style={{ animationDelay: "0.3s" }}>
-            <h3 className="font-serif text-lg font-bold text-navy mb-4">
+            <h3 className="font-serif text-[18px] font-bold text-navy mb-4">
               Your first 30 days
             </h3>
             <div className="bg-white border border-border rounded-xl p-5">
@@ -823,7 +830,7 @@ export default function IdeaSynthesizerPage() {
           {/* What Your Week Looks Like */}
           {map.your_week && (
             <div className="mb-10 fade-up" style={{ animationDelay: "0.35s" }}>
-              <h3 className="font-serif text-lg font-bold text-navy mb-4">
+              <h3 className="font-serif text-[18px] font-bold text-navy mb-4">
                 What your week actually looks like
               </h3>
               <div className="bg-white border border-border rounded-xl p-6">
@@ -854,7 +861,7 @@ export default function IdeaSynthesizerPage() {
 
           {/* Smart Remix */}
           <div className="mb-10 fade-up" style={{ animationDelay: "0.48s" }}>
-            <h3 className="font-serif text-lg font-bold text-navy mb-3">
+            <h3 className="font-serif text-[18px] font-bold text-navy mb-3">
               Remix your map
             </h3>
             <p className="text-muted text-[15px] mb-4">
@@ -866,7 +873,7 @@ export default function IdeaSynthesizerPage() {
                   key={chip}
                   onClick={() => handleRemix(chip)}
                   disabled={refining}
-                  className="remix-chip bg-white border border-border rounded-full px-4 py-2 text-[13px] font-semibold text-navy hover:border-gold hover:bg-gold/5 transition min-h-[44px] disabled:opacity-50"
+                  className="remix-chip bg-white border border-border rounded-full px-4 py-2 text-[14px] font-semibold text-navy hover:border-gold hover:bg-gold/5 transition min-h-[44px] disabled:opacity-50"
                 >
                   {chip}
                 </button>
@@ -910,7 +917,7 @@ export default function IdeaSynthesizerPage() {
           {/* Resource Links */}
           {resourceLinks.length > 0 && (
             <div className="mb-10 fade-up" style={{ animationDelay: "0.5s" }}>
-              <h3 className="font-serif text-lg font-bold text-navy mb-4">
+              <h3 className="font-serif text-[18px] font-bold text-navy mb-4">
                 Resources to get started
               </h3>
               <div className="space-y-4">
@@ -977,6 +984,17 @@ export default function IdeaSynthesizerPage() {
                 <p className="text-[15px] text-red-800">{error}</p>
               </div>
             )}
+          </div>
+
+          {/* Bottom CTA */}
+          <div className="mt-8 text-center">
+            <a href="mailto:joe@conduitventures.com?subject=I want to build my platform"
+              className="inline-block bg-[#C8922A] text-white px-10 py-4 rounded-full text-[17px] font-bold hover:opacity-90 transition gentle-pulse">
+              Let&apos;s Build This &rarr;
+            </a>
+            <p className="text-[13px] text-[#6B7280] mt-3">
+              Conduit Ventures builds your platform in 4-6 weeks. Starting at $500.
+            </p>
           </div>
         </div>
 
