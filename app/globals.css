@@ -74,3 +74,27 @@
 .pulse-glow {
   animation: pulseGlow 2s ease-in-out infinite;
 }
+
+/* Slide-in panel for Revenue Stream Deep Dive */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+/* Remix chips */
+.remix-chip:hover {
+  transform: translateY(-1px);
+}
+
+/* Resource links */
+.resource-link:hover {
+  transform: translateY(-1px);
+}

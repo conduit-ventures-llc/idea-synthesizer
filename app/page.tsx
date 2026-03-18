@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import RevenueStreamDive from "@/components/RevenueStreamDive";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -21,13 +22,42 @@ interface MonetizationMap {
   closing_line: string;
 }
 
+interface ResourceLinkGroup {
+  category: string;
+  icon: string;
+  links: { name: string; url: string; description: string }[];
+}
+
+type ExpertType = "teacher" | "performer" | "coach" | "analyst" | "connector" | "creator";
+
 interface IdeaVault {
   answers: Record<string, string>;
   mode: Mode;
   monetizationMap: MonetizationMap | null;
   email: string;
   savedAt: string | null;
+  expertType?: ExpertType;
 }
+
+const EXPERT_TYPES: { value: ExpertType; emoji: string; label: string; subtitle: string }[] = [
+  { value: "teacher", emoji: "\uD83D\uDCD6", label: "The Teacher", subtitle: "Loves to explain" },
+  { value: "performer", emoji: "\uD83C\uDFB5", label: "The Performer", subtitle: "Loves to engage" },
+  { value: "coach", emoji: "\uD83E\uDD38", label: "The Coach", subtitle: "Loves to train" },
+  { value: "analyst", emoji: "\uD83D\uDD22", label: "The Analyst", subtitle: "Loves to solve" },
+  { value: "connector", emoji: "\uD83D\uDC65", label: "The Connector", subtitle: "Loves to network" },
+  { value: "creator", emoji: "\uD83C\uDFA8", label: "The Creator", subtitle: "Loves to make" },
+];
+
+const REMIX_CHIPS = [
+  "Higher income scenario",
+  "Lower barrier to start",
+  "Add group offering",
+  "Make it recurring",
+  "Add a digital product",
+  "Franchise this idea",
+  "Brother Nick version \u2014 service angle",
+  "Add partnership model",
+];
 
 // ─── Prompts ────────────────────────────────────────────────────────────────
 
@@ -83,6 +113,12 @@ export default function IdeaSynthesizerPage() {
   const [recording, setRecording] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [expertType, setExpertType] = useState<ExpertType | null>(null);
+  const [resourceLinks, setResourceLinks] = useState<ResourceLinkGroup[]>([]);
+  const [refineInput, setRefineInput] = useState("");
+  const [refining, setRefining] = useState(false);
+  const [diveOpen, setDiveOpen] = useState(false);
+  const [diveScenario, setDiveScenario] = useState<{ label: string; description: string; monthly: string } | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -97,6 +133,9 @@ export default function IdeaSynthesizerPage() {
     }
     if (loaded.email) {
       setEmail(loaded.email);
+    }
+    if (loaded.expertType) {
+      setExpertType(loaded.expertType);
     }
   }, []);
 
@@ -175,7 +214,7 @@ export default function IdeaSynthesizerPage() {
   async function handleHeroSubmit() {
     if (!heroInput.trim()) return;
     const updatedAnswers: Record<string, string> = { ...vault.answers, "0": heroInput };
-    const updated = { ...vault, answers: updatedAnswers, mode };
+    const updated = { ...vault, answers: updatedAnswers, mode, expertType: expertType || undefined };
     setVault(updated);
     saveVault(updated);
 
@@ -235,8 +274,8 @@ export default function IdeaSynthesizerPage() {
     }
   }
 
-  async function handleGenerateMap(currentVault: IdeaVault) {
-    setPhase("generating");
+  async function handleGenerateMap(currentVault: IdeaVault, refineInstruction?: string) {
+    if (!refineInstruction) setPhase("generating");
     setGenerating(true);
     setError("");
 
@@ -244,7 +283,12 @@ export default function IdeaSynthesizerPage() {
       const res = await fetch("/api/generate-map", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers: currentVault.answers, mode }),
+        body: JSON.stringify({
+          answers: currentVault.answers,
+          mode,
+          expert_type: expertType || undefined,
+          refine_instruction: refineInstruction || undefined,
+        }),
       });
 
       if (!res.ok) {
@@ -256,19 +300,31 @@ export default function IdeaSynthesizerPage() {
       const mapData = data.map as MonetizationMap;
 
       setMap(mapData);
+      if (data.resourceLinks) {
+        setResourceLinks(data.resourceLinks as ResourceLinkGroup[]);
+      }
       const updated = { ...currentVault, monetizationMap: mapData };
       setVault(updated);
       saveVault(updated);
       setPhase("map");
     } catch {
       setError("We hit a snag generating your Monetization Map. Let\u2019s try again.");
-      setPhase("prompts");
-      // Go back to last prompt
-      const prompts = getActivePrompts();
-      setCurrentPrompt(prompts[prompts.length - 1]);
+      if (!refineInstruction) {
+        setPhase("prompts");
+        const prompts = getActivePrompts();
+        setCurrentPrompt(prompts[prompts.length - 1]);
+      }
     } finally {
       setGenerating(false);
+      setRefining(false);
     }
+  }
+
+  async function handleRemix(instruction: string) {
+    setRefineInput(instruction);
+    setRefining(true);
+    await handleGenerateMap(vault, instruction);
+    setRefineInput("");
   }
 
   async function handleSaveIdea() {
@@ -314,6 +370,12 @@ export default function IdeaSynthesizerPage() {
     setPersonalizedPrompts(DEFAULT_PROMPTS);
     setPhase("hero");
     setCurrentPrompt(0);
+    setExpertType(null);
+    setResourceLinks([]);
+    setRefineInput("");
+    setRefining(false);
+    setDiveOpen(false);
+    setDiveScenario(null);
   }
 
   // ─── HERO PHASE ─────────────────────────────────────────────────────────
@@ -359,6 +421,36 @@ export default function IdeaSynthesizerPage() {
                   </div>
                 </button>
               ))}
+            </div>
+
+            {/* Expert Type Selector */}
+            <div className="mb-8">
+              <p className="text-xs font-bold text-navy uppercase tracking-[0.15em] mb-3 text-center">What kind of expert are you?</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {EXPERT_TYPES.map((et) => (
+                  <button
+                    key={et.value}
+                    onClick={() => setExpertType(expertType === et.value ? null : et.value)}
+                    className={`rounded-xl px-3 py-3 text-left border transition min-h-[44px] ${
+                      expertType === et.value
+                        ? "bg-navy text-white border-navy"
+                        : "bg-white text-text border-border hover:border-navy/30"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{et.emoji}</span>
+                      <div>
+                        <div className={`text-xs font-bold ${expertType === et.value ? "text-white" : "text-navy"}`}>
+                          {et.label}
+                        </div>
+                        <div className={`text-[10px] ${expertType === et.value ? "text-white/70" : "text-muted"}`}>
+                          {et.subtitle}
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Input */}
@@ -689,6 +781,19 @@ export default function IdeaSynthesizerPage() {
                   }`}>
                     {scenario.description}
                   </p>
+                  <button
+                    onClick={() => {
+                      setDiveScenario(scenario);
+                      setDiveOpen(true);
+                    }}
+                    className={`mt-3 text-xs font-bold transition min-h-[32px] flex items-center gap-1 ${
+                      i === 1
+                        ? "text-gold hover:text-gold-light"
+                        : "text-gold hover:text-gold-light"
+                    }`}
+                  >
+                    Explore This Revenue Stream &rarr;
+                  </button>
                 </div>
               ))}
             </div>
@@ -747,6 +852,93 @@ export default function IdeaSynthesizerPage() {
             </p>
           </div>
 
+          {/* Smart Remix */}
+          <div className="mb-10 fade-up" style={{ animationDelay: "0.48s" }}>
+            <h3 className="font-serif text-lg font-bold text-navy mb-3">
+              Remix your map
+            </h3>
+            <p className="text-muted text-sm mb-4">
+              Tap a suggestion or type your own to regenerate with a twist.
+            </p>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {REMIX_CHIPS.map((chip) => (
+                <button
+                  key={chip}
+                  onClick={() => handleRemix(chip)}
+                  disabled={refining}
+                  className="remix-chip bg-white border border-border rounded-full px-4 py-2 text-xs font-semibold text-navy hover:border-gold hover:bg-gold/5 transition min-h-[36px] disabled:opacity-50"
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <textarea
+                value={refineInput}
+                onChange={(e) => setRefineInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    if (refineInput.trim()) handleRemix(refineInput);
+                  }
+                }}
+                placeholder="Or type your own remix instruction..."
+                className="flex-1 bg-white border border-border rounded-xl px-4 py-3 text-sm resize-none h-12 focus:border-gold transition placeholder:text-muted/50"
+              />
+              <button
+                onClick={() => {
+                  if (refineInput.trim()) handleRemix(refineInput);
+                }}
+                disabled={!refineInput.trim() || refining}
+                className={`rounded-xl px-6 py-3 text-sm font-bold transition min-h-[44px] ${
+                  refineInput.trim() && !refining
+                    ? "bg-gold text-white hover:opacity-90 cursor-pointer"
+                    : "bg-cream-dark text-muted cursor-not-allowed"
+                }`}
+              >
+                {refining ? "Remixing..." : "Remix"}
+              </button>
+            </div>
+            {refining && (
+              <div className="flex items-center gap-3 mt-3 fade-in">
+                <div className="w-4 h-4 border-2 border-gold/30 border-t-gold rounded-full spin-slow" />
+                <span className="text-xs text-muted">Regenerating your Monetization Map...</span>
+              </div>
+            )}
+          </div>
+
+          {/* Resource Links */}
+          {resourceLinks.length > 0 && (
+            <div className="mb-10 fade-up" style={{ animationDelay: "0.5s" }}>
+              <h3 className="font-serif text-lg font-bold text-navy mb-4">
+                Resources to get started
+              </h3>
+              <div className="space-y-4">
+                {resourceLinks.map((group, gi) => (
+                  <div key={gi}>
+                    <p className="text-xs font-bold text-navy uppercase tracking-[0.12em] mb-2 flex items-center gap-2">
+                      <span>{group.icon}</span> {group.category}
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {group.links.map((link, li) => (
+                        <a
+                          key={li}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="resource-link bg-white border border-border rounded-xl px-4 py-3 hover:border-gold/50 hover:shadow-sm transition block"
+                        >
+                          <p className="text-sm font-bold text-navy">{link.name}</p>
+                          <p className="text-xs text-muted mt-0.5 leading-relaxed">{link.description}</p>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Idea Vault — Save */}
           <div className="bg-white border-2 border-gold/30 rounded-2xl p-6 sm:p-8 fade-up" style={{ animationDelay: "0.5s" }}>
             <h3 className="font-serif text-xl font-bold text-navy mb-2 text-center">
@@ -787,6 +979,21 @@ export default function IdeaSynthesizerPage() {
             )}
           </div>
         </div>
+
+        {/* Revenue Stream Deep Dive Panel */}
+        {diveScenario && (
+          <RevenueStreamDive
+            open={diveOpen}
+            onClose={() => {
+              setDiveOpen(false);
+              setDiveScenario(null);
+            }}
+            streamLabel={diveScenario.label}
+            streamDescription={diveScenario.description}
+            streamMonthly={diveScenario.monthly}
+            context={Object.values(vault.answers).join("\n")}
+          />
+        )}
       </div>
     );
   }

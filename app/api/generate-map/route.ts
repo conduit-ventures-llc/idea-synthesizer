@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateText } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
+import { findMatchingResources, buildResourceLinksData } from "@/lib/resource-links";
 
 const SYSTEM_PROMPT = `You are the Conduit Ventures Idea Synthesizer. Your job is to take someone's raw answers about their expertise and generate a Monetization Map — a structured, honest, and encouraging analysis of how they could turn their knowledge into income.
 
@@ -54,7 +55,7 @@ OUTPUT FORMAT: Return ONLY valid JSON. No markdown. No code fences. No preamble.
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { answers } = body;
+    const { answers, expert_type, refine_instruction } = body;
 
     if (!answers || Object.keys(answers).length === 0) {
       return NextResponse.json({ error: "No answers provided" }, { status: 400 });
@@ -75,7 +76,27 @@ export async function POST(request: NextRequest) {
       })
       .join("\n\n");
 
-    const userMessage = `Here are this person's answers. Generate their Monetization Map.\n\n${answerLines}`;
+    // Expert type tailoring
+    const expertTypeDescriptions: Record<string, string> = {
+      teacher: "This person is a Teacher type — they love to explain, break down complex topics, and educate. Tailor the Monetization Map toward teaching, courses, workshops, and educational content.",
+      performer: "This person is a Performer type — they love to engage, entertain, and hold attention. Tailor the Monetization Map toward live events, speaking, content creation, and audience-driven models.",
+      coach: "This person is a Coach type — they love to train, mentor, and guide people through transformation. Tailor the Monetization Map toward coaching programs, accountability groups, and 1-on-1 services.",
+      analyst: "This person is an Analyst type — they love to solve problems, work with data, and build systems. Tailor the Monetization Map toward consulting, tools, templates, and systematic solutions.",
+      connector: "This person is a Connector type — they love to network, introduce people, and build communities. Tailor the Monetization Map toward community platforms, partnerships, events, and referral-based models.",
+      creator: "This person is a Creator type — they love to make things, design, and build from scratch. Tailor the Monetization Map toward digital products, design services, and creative offerings.",
+    };
+
+    let expertContext = "";
+    if (expert_type && expertTypeDescriptions[expert_type]) {
+      expertContext = `\n\nEXPERT TYPE: ${expertTypeDescriptions[expert_type]}`;
+    }
+
+    let refineContext = "";
+    if (refine_instruction) {
+      refineContext = `\n\nREFINEMENT REQUEST: The user wants you to adjust the Monetization Map with this instruction: "${refine_instruction}". Regenerate the full map with this adjustment applied.`;
+    }
+
+    const userMessage = `Here are this person's answers. Generate their Monetization Map.\n\n${answerLines}${expertContext}${refineContext}`;
 
     const result = await generateText({
       model: anthropic("claude-sonnet-4-20250514"),
@@ -101,7 +122,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ map: mapData });
+    // Find matching resource links based on the full generated text
+    const fullText = result.text + " " + Object.values(answers as Record<string, string>).join(" ");
+    const matchedResources = findMatchingResources(fullText);
+    const resourceLinks = buildResourceLinksData(matchedResources);
+
+    return NextResponse.json({ map: mapData, resourceLinks });
   } catch (err) {
     console.error("[generate-map] Error:", err);
     return NextResponse.json(
