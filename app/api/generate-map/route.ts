@@ -13,42 +13,101 @@ Only generate Monetization Maps for ideas that:
 
 Never generate maps for gambling, adult content, drugs, weapons, or anything that conflicts with the dignity of the person. If the idea fails these tests, return an error.
 
+INPUT QUESTIONS — the user answered these 7 questions:
+- q1_person_helped: A specific person they helped recently — their struggle and what changed.
+- q2_hard_way: What they figured out the hard way that they wish someone had told them.
+- q3_should_charge: What people say they should teach/write a book about/charge for.
+- q4_costly_mistake: The painful mistake people make without this knowledge — cost in money, time, heartache.
+- q5_scale: What would need to exist to help 1,000 people without burning out.
+- q6_guilt: Whether they feel uncomfortable charging for this.
+- q7_fire: The idea they would talk about for an hour around a fire.
+
+NONPROFIT DETECTION:
+If the answers mention nonprofit, volunteer, charity, ministry, church service, or similar — set is_nonprofit to true and adjust all scenarios to reflect grant-funded, donation-based, or social enterprise models rather than direct client billing.
+
 CALCULATION METHOD:
 - Scenario A (Side Income): Conservative. 5-10 clients/month at a low price point. $500-2,000/month.
 - Scenario B (Replace Salary): Moderate. 20-50 clients or a course/membership model. $4,000-10,000/month. This is "the_one_number".
 - Scenario C (Build Something Real): Ambitious. Scaled product, team, partnerships. $15,000-50,000+/month.
 
-Be specific. Use real numbers. Reference their actual answers.
+For number_basis: Explain the math behind the_one_number. Format: "Based on [their domain/expertise] serving [the type of person from Q1] at [price point] x [number of clients]". Be specific.
 
-For three_people: describe three SPECIFIC humans (with a name, a situation, and why they need this). Not demographics — people.
+For comparable_experts: Find 3 real-world examples of people with similar backgrounds who monetized similar expertise. Include their background, what they earn, and what they do. These should feel achievable, not celebrity-level.
 
-For path_to_first_dollar: give 4 concrete weekly actions for the first month. Week 1 should always be "Expert Interview" — talk to 3 people who have the problem.
+For three_people: Describe three SPECIFIC humans. Each needs:
+- name: A realistic first name
+- situation: Their current life situation
+- problem: The specific problem they have that the expert can solve
+- where_to_find: Exactly where to find this person (specific subreddit, LinkedIn group, local venue, etc.)
+- opening_line: A conversational message the expert could send to this person right now
 
-For your_week: write 3-4 sentences showing what their actual week looks like once this is running. Be SPECIFIC to their vertical — not generic. Show exactly how little time they spend vs. what AI handles for them. Reference their specific expertise. Example for a coaching dad: "You record your system once — two hours on a Sunday afternoon. AI handles every parent who needs it after that. Tuesday nights you coach. Wednesday morning your AI answered 12 questions while you slept."
+For three_scenarios: Each scenario needs:
+- label: "Scenario A — Side Income", "Scenario B — Replace Your Salary", "Scenario C — Build Something Real"
+- description: What this looks like
+- monthly: The monthly income
+- steps: 4-6 concrete steps to get there
 
-For vertical_name: create a compelling product/brand name. Short, memorable, professional.
-For vertical_description: one sentence that would work as a tagline.
+For guilt_response: If q6_guilt indicates discomfort, guilt, or hesitation about charging — write a warm, direct, personal response that addresses their specific fear. Reference their exact words. If q6_guilt shows no guilt (e.g., "No", "I'm fine with it"), set this to null.
 
-For closing_line: always use exactly this: "You already did the hard part. You lived it. Now let it work for you."
+For turnkey_pack: Generate all 4 items:
+- first_email: { subject, body } — A ready-to-send email to their first potential client. Use their specific expertise from the intake.
+- linkedin_post: A ready-to-post LinkedIn update announcing their offering. 150-200 words.
+- one_page_description: A one-page description of their offering suitable for a website or PDF. 200-300 words.
+- seven_day_plan: 7 items, one per day. Each { day: 1-7, action: "specific action" }. Day 1 is always "Talk to 3 people who have the problem from Q1."
+
+For wow_letter: Generate 200-300 words. This is the most important part. Rules:
+- Acknowledge the fear BEFORE the opportunity
+- Use their EXACT words from the intake — quote them back
+- Name the specific person from Q1 by referencing their situation
+- Address Q6 guilt directly if present
+- End with ONE specific action this week
+- Never sound like AI. Sound like the most insightful person they have ever met.
+- Write in second person ("you"), warm but direct
+- Break into 3-4 paragraphs
+
+For vertical_name: Create a compelling product/brand name. Short, memorable, professional.
+For vertical_description: One sentence that would work as a tagline.
+
+For closing_line: Always use exactly this: "You already did the hard part. You lived it. Now let it work for you."
 
 OUTPUT FORMAT: Return ONLY valid JSON. No markdown. No code fences. No preamble.
 {
   "the_one_number": "$X,XXX/month",
-  "three_people": ["Person 1 description", "Person 2 description", "Person 3 description"],
+  "number_basis": "Based on [domain] serving [person type] at $X x Y clients/month",
+  "three_people": [
+    { "name": "...", "situation": "...", "problem": "...", "where_to_find": "...", "opening_line": "..." },
+    { "name": "...", "situation": "...", "problem": "...", "where_to_find": "...", "opening_line": "..." },
+    { "name": "...", "situation": "...", "problem": "...", "where_to_find": "...", "opening_line": "..." }
+  ],
   "three_scenarios": [
-    { "label": "Scenario A — Side Income", "description": "...", "monthly": "$X,XXX" },
-    { "label": "Scenario B — Replace Your Salary", "description": "...", "monthly": "$X,XXX" },
-    { "label": "Scenario C — Build Something Real", "description": "...", "monthly": "$XX,XXX" }
+    { "label": "Scenario A — Side Income", "description": "...", "monthly": "$X,XXX", "steps": ["...", "..."] },
+    { "label": "Scenario B — Replace Your Salary", "description": "...", "monthly": "$X,XXX", "steps": ["...", "..."] },
+    { "label": "Scenario C — Build Something Real", "description": "...", "monthly": "$XX,XXX", "steps": ["...", "..."] }
   ],
-  "path_to_first_dollar": [
-    { "week": 1, "action": "Expert Interview — talk to 3 people who have this problem" },
-    { "week": 2, "action": "..." },
-    { "week": 3, "action": "..." },
-    { "week": 4, "action": "..." }
+  "comparable_experts": [
+    { "background": "...", "earning": "$X,XXX/month", "doing": "..." },
+    { "background": "...", "earning": "$X,XXX/month", "doing": "..." },
+    { "background": "...", "earning": "$X,XXX/month", "doing": "..." }
   ],
-  "your_week": "3-4 sentences specific to their vertical...",
+  "guilt_response": "..." or null,
+  "turnkey_pack": {
+    "first_email": { "subject": "...", "body": "..." },
+    "linkedin_post": "...",
+    "one_page_description": "...",
+    "seven_day_plan": [
+      { "day": 1, "action": "Talk to 3 people who have the problem..." },
+      { "day": 2, "action": "..." },
+      { "day": 3, "action": "..." },
+      { "day": 4, "action": "..." },
+      { "day": 5, "action": "..." },
+      { "day": 6, "action": "..." },
+      { "day": 7, "action": "..." }
+    ]
+  },
+  "wow_letter": "200-300 words...",
   "vertical_name": "...",
   "vertical_description": "...",
+  "is_nonprofit": false,
   "closing_line": "You already did the hard part. You lived it. Now let it work for you."
 }`;
 
@@ -62,17 +121,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Build user message from answers
+    const promptLabels: Record<string, string> = {
+      q1_person_helped: "Person they helped recently (Q1)",
+      q2_hard_way: "What they figured out the hard way (Q2)",
+      q3_should_charge: "What people say they should charge for (Q3)",
+      q4_costly_mistake: "The costly mistake people make without their knowledge (Q4)",
+      q5_scale: "How to help 1,000 people without burning out (Q5)",
+      q6_guilt: "Discomfort about charging (Q6)",
+      q7_fire: "The fire pit idea (Q7)",
+    };
+
     const answerLines = Object.entries(answers as Record<string, string>)
       .map(([key, value]) => {
-        if (key === "blueprint") return `Blueprint request: ${value}`;
-        const promptLabels: Record<string, string> = {
-          "0": "Problem they solved",
-          "1": "What people say they should teach",
-          "2": "Advice they wish someone had given them 5 years ago",
-          "3": "Fire pit conversation topic",
-          "4": "Can they help 1,000 people?",
-        };
-        return `${promptLabels[key] || `Answer ${key}`}: ${value}`;
+        return `${promptLabels[key] || `Answer (${key})`}: ${value}`;
       })
       .join("\n\n");
 
@@ -102,7 +163,7 @@ export async function POST(request: NextRequest) {
       model: anthropic("claude-sonnet-4-20250514"),
       system: SYSTEM_PROMPT,
       prompt: userMessage,
-      maxTokens: 2000,
+      maxTokens: 4000,
     });
 
     // Parse JSON from response
